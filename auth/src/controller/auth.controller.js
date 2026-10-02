@@ -4,7 +4,7 @@ import config from "../config/config.js";
 import bcrypt from "bcryptjs";
 import crypto, { setEngine } from "node:crypto";
 import sessionModel from "../model/session.model.js";
-import { sendEmail } from "../services/email.service.js";
+import { sendOtpEmail } from "../services/email.service.js";    
 import { generateOTP, getOtpHtml } from "../utils/utils.js";
 import otpModel from "../model/otp.model.js";
 
@@ -44,7 +44,7 @@ export async function register(req, res) {
         otpHash
     })
 
-    await sendEmail(email,"OTP Verification", `Your OTP code is ${otp}`,html)
+    await sendOtpEmail(email, otp);
     
     return res.status(201).json({
         message: "user registered successfully",

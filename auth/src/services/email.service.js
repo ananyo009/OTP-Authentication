@@ -75,7 +75,7 @@ export async function sendOtpEmail(to, otp) {
       requestBody: { raw: encodedMessage },
     });
   }
-  catch (error) {
+  catch (err) {
     // THIS PRINTS THE REAL GOOGLE API ERROR:
     console.error("--> GOOGLE API CRASH REASON:", JSON.stringify(err.response?.data || err.message, null, 2));
     throw err;

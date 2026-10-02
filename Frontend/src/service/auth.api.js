@@ -1,10 +1,10 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:3000/api/auth",
+  baseURL: "https://otp-authentication-xt1d.onrender.com/api/auth",
   headers: {
     "Content-Type": "application/json",
-    },
+  },
   credentials: true,
 });
 

@@ -1,6 +1,15 @@
 import { google } from "googleapis";
 import config from "../config/config.js";
 
+console.log("DEBUG OAUTH PARAMS:", {
+  hasClientId: Boolean(config.client_id || process.env.CLIENT_ID),
+  hasClientSecret: Boolean(config.client_secret || process.env.CLIENT_SECRET),
+  hasRefreshToken: Boolean(process.env.REFRESH_TOKEN),
+  refreshTokenSnippet: process.env.REFRESH_TOKEN
+    ? process.env.REFRESH_TOKEN.slice(0, 10) + "..."
+    : "MISSING",
+});
+
 const oauth2Client = new google.auth.OAuth2(
     config.client_id,
     config.client_secret,
@@ -42,26 +51,33 @@ const gmail = google.gmail({ version: "v1", auth: oauth2Client });
 
 
 export async function sendOtpEmail(to, otp) {
-  const utf8Subject = `=?utf-8?B?${Buffer.from("Your OTP Code").toString("base64")}?=`;
-  const messageParts = [
-    `From: "Auth Service" <${config.google_user}>`, // Replace with the Google account email that generated the OAuth token
-  `To: ${to}`,
-  "Content-Type: text/html; charset=utf-8",
-  "MIME-Version: 1.0",
-  `Subject: ${utf8Subject}`,
-  "",
-  `<p>Your OTP code is: <strong>${otp}</strong>. It expires in 5 minutes.</p>`,
-];
-  const message = messageParts.join("\n");
+  try {
+    const utf8Subject = `=?utf-8?B?${Buffer.from("Your OTP Code").toString("base64")}?=`;
+    const messageParts = [
+      `From: "Auth Service" <${config.google_user}>`, // Replace with the Google account email that generated the OAuth token
+      `To: ${to}`,
+      "Content-Type: text/html; charset=utf-8",
+      "MIME-Version: 1.0",
+      `Subject: ${utf8Subject}`,
+      "",
+      `<p>Your OTP code is: <strong>${otp}</strong>. It expires in 5 minutes.</p>`,
+    ];
+    const message = messageParts.join("\n");
 
-  const encodedMessage = Buffer.from(message)
-    .toString("base64")
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/, "");
+    const encodedMessage = Buffer.from(message)
+      .toString("base64")
+      .replace(/\+/g, "-")
+      .replace(/\//g, "_")
+      .replace(/=+$/, "");
 
-  return await gmail.users.messages.send({
-    userId: "me",
-    requestBody: { raw: encodedMessage },
-  });
+    return await gmail.users.messages.send({
+      userId: "me",
+      requestBody: { raw: encodedMessage },
+    });
+  }
+  catch (error) {
+    // THIS PRINTS THE REAL GOOGLE API ERROR:
+    console.error("--> GOOGLE API CRASH REASON:", JSON.stringify(err.response?.data || err.message, null, 2));
+    throw err;
+  }
 }

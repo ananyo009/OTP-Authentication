@@ -30,7 +30,7 @@ const config = {
     mongo_uri: process.env.MONGO_URI,
     jwt_secret: process.env.JWT_SECRET,
     client_id: process.env.CLIENT_ID,
-    client_secret: process.env.client_secret,
+    client_secret: process.env.CLIENT_SECRET,
     google_user: process.env.GOOGLE_USER,
     refresh_token: process.env.REFRESH_TOKEN
 

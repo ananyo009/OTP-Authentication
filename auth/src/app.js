@@ -7,6 +7,7 @@ import cors from "cors";
 const app = express();
 
 app.use(express.json())//middleware to read requests
+app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"))
 app.use(cookieParser())
 app.use(

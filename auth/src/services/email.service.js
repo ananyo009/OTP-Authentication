@@ -44,13 +44,14 @@ const gmail = google.gmail({ version: "v1", auth: oauth2Client });
 export async function sendOtpEmail(to, otp) {
   const utf8Subject = `=?utf-8?B?${Buffer.from("Your OTP Code").toString("base64")}?=`;
   const messageParts = [
-    `To: ${to}`,
-    "Content-Type: text/html; charset=utf-8",
-    "MIME-Version: 1.0",
-    `Subject: ${utf8Subject}`,
-    "",
-    `<p>Your OTP code is: <strong>${otp}</strong>. It expires in 5 minutes.</p>`,
-  ];
+    `From: "Auth Service" <${config.google_user}>`, // Replace with the Google account email that generated the OAuth token
+  `To: ${to}`,
+  "Content-Type: text/html; charset=utf-8",
+  "MIME-Version: 1.0",
+  `Subject: ${utf8Subject}`,
+  "",
+  `<p>Your OTP code is: <strong>${otp}</strong>. It expires in 5 minutes.</p>`,
+];
   const message = messageParts.join("\n");
 
   const encodedMessage = Buffer.from(message)

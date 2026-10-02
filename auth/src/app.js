@@ -9,10 +9,12 @@ const app = express();
 app.use(express.json())//middleware to read requests
 app.use(morgan("dev"))
 app.use(cookieParser())
-app.use(cors({
-    origin: "http://localhost:5173",
+app.use(
+  cors({
+    origin: "https://otp-authentication-self.vercel.app",
     credentials: true,
-}))
+  }),
+);
 
 app.use("/api/auth",authRouter)
 
